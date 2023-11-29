@@ -65,7 +65,7 @@ public class ArihmaticCalculator {
 
 
 
-#practice project2 [VALIDATION OF EMAIL]
+# practice project2 [VALIDATION OF EMAIL]
 
 
 package Practice;
@@ -112,4 +112,4 @@ public class EmailValidation {
    }
 }
 
-#
+
