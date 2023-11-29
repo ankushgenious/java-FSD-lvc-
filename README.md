@@ -61,3 +61,55 @@ public class ArihmaticCalculator {
 	}
 
 }
+
+
+
+
+#practice project2 [VALIDATION OF EMAIL]
+
+
+package Practice;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+public class EmailValidation {
+	
+   private static final String regex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+   
+   public static void main(String args[]) {
+	   
+      
+       List<String> emails = new ArrayList<String>();
+       
+       System.out.println("Checking email addresses which are following pattern and which one does not....\n");
+       
+       emails.add("ankush@example.com");
+       emails.add("aman@example.co.in");
+       emails.add("atul@example.me.org");
+       emails.add("ashraf@example.com");
+       emails.add("aseem@example.com");
+       
+       
+       
+       //These are  email addresses which are not following our declared pattern as before @ only [A-Za-z0-9] can come
+       
+       
+       emails.add("@example.com");
+       emails.add("alice&example.com");
+       emails.add("alice#@example.me.org");
+       
+       													
+       
+       Pattern pattern = Pattern.compile(regex); //initializing the pattern object
+       
+       //searching for occurrences of regex
+       for (String value : emails) {
+           Matcher matcher = pattern.matcher(value);
+           System.out.println("Email " + value + " is " + (matcher.matches() ? "valid" : "invalid"));
+       }
+   }
+}
+
+#
