@@ -113,7 +113,7 @@ public class EmailValidation {
 }
 
 
-# FILE HANDELLING
+# practice project :3 [FILE HANDELLING]
 
 package Practice;
 
@@ -159,6 +159,44 @@ public class FileOperation {
             System.err.println("Error reading from the file: " + e.getMessage());
         }
         return content.toString();
+    }
+}
+
+
+# practice project 4: [longest increasing subsequence]
+
+
+package Practice;
+
+import java.util.Arrays;
+
+public class LongestIncreasingSubsequence {
+
+    public static int longestIncreasingSubsequence(int[] nums) {
+        int n = nums.length;
+        if (n == 0) {
+            return 0;
+        }
+
+        int[] lis = new int[n];
+        Arrays.fill(lis, 1);
+
+        for (int i = 1; i < n; i++) {
+            for (int j = 0; j < i; j++) {
+                if (nums[i] > nums[j] && lis[i] < lis[j] + 1) {
+                    lis[i] = lis[j] + 1;
+                }
+            }
+        }
+
+        int maxLength = Arrays.stream(lis).max().orElse(1);
+        return maxLength;
+    }
+
+    public static void main(String[] args) {
+        int[] nums = {15, 22, 9, 33, 23, 50, 31, 65, 83};
+        int result = longestIncreasingSubsequence(nums);
+        System.out.println("Length of Longest Increasing Subsequence: " + result);
     }
 }
 
