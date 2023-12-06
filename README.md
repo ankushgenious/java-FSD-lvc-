@@ -207,13 +207,16 @@ public class LongestIncreasingSubsequence {
 package Practice;
 
 import java.util.ArrayList;
+
 import java.util.Collections;
 import java.util.Scanner;
+
 public class FixBugs {
 public static void main(String[] args) {
 System.out.println("\n*************\n");
 System.out.println("\tWelcome to TheDesk \n");
 System.out.println("**************");
+
 optionsSelection();
 }
 private static void optionsSelection() {
@@ -225,9 +228,11 @@ String[] arrMenuOptions = {"1. I wish to review my expenditure",
 		                   "6. Close the application"
 		                    };
 int[] arr1 = {1, 2, 3, 4, 5, 6};
+
 ArrayList<Integer>arrlist = new ArrayList<Integer>();
 ArrayList<Integer>expenses = new ArrayList<Integer>();
 expenses.add(1200);
+
 expenses.add(500);
 expenses.add(3000);
 expenses.add(7000);
@@ -251,7 +256,8 @@ case 1:
 		System.out.println(expenses + "\n");
 		 }
 		break;
-case 2:
+                case 2:
+		
 		System.out.println("Enter the value to add your Expense: \n");
 		int value = sc.nextInt();
 		expenses.add(value);
@@ -259,7 +265,8 @@ case 2:
 		expenses.addAll(arrlist);
 		System.out.println(expenses + "\n");
 		break;
-case 3:
+                case 3:
+		
 		System.out.println("You are about the delete all your expenses! \nConfirm again by selecting the same option...\n");
 		int con_choice = sc.nextInt();
 		if (con_choice == options)
@@ -273,24 +280,30 @@ case 3:
 		System.out.println("Oops... try again!");
 		  }
 		break;
-case 4:	
+  
+                case 4:	
 		sortExpenses(expenses);
 		break;
-case 5:
+                case 5:
+		
 		searchExpenses(expenses);
 		break;
-case 6:
+  
+                case 6:
 		closeApp();
 		break;
-default:
+  
+                default:
 		System.out.println("You have made an invalid choice!\nTry again!\n");
 		break;
 		            }
 		        }
 		    }
 private static void displayMenuOptions(String[] arrMenuOptions) {
+
 int slen = arrMenuOptions.length;
 for (int i = 0; i<slen; i++)
+
 {
 		// display the all the Strings mentioned in the String array
 System.out.println(arrMenuOptions[i]);
