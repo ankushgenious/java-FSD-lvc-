@@ -200,3 +200,227 @@ or query execution
  }
  }
 }
+
+
+# project : 3  Adding a new product in the Database
+
+Jsp page 
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<div align="center">
+<h2>Add a New Product</h2>
+<form action="Product" method="post">
+Enter ID: <input type="number" id="pid"
+name="pid"
+placeholder="Enter id here..."
+required> <br /> <br />
+Enter TYPE <input type="text" id="name"
+name="name"
+placeholder="Enter name here..."
+required> <br /> <br />
+Enter MODEL: <input type="text" id="color"
+name="color"
+placeholder="Enter color here..."
+required> <br /> <br />
+Enter NAME: <input type="text" id="price"
+name="price"
+placeholder="Enter number here..."
+required> <br /> <br /> <input
+type="submit" value="Submit">
+</form>
+</div>
+
+
+</body>
+</html>
+
+Product
+public class Product {
+	private int pid; 
+	private String type;
+	private String model;
+	private String Name;
+	public int getPid() {
+		return pid;
+	}
+	public void setPid(int pid) {
+		this.pid = pid;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public String getName() {
+		return Name;
+	}
+	public void setName(String name) {
+		Name = name;
+	}
+	public String getModel() {
+		return model;
+	}
+	public void setModel(String model) {
+		this.model = model;
+	}
+
+}
+
+
+Add Product
+
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class AddProduct
+ */
+@WebServlet("/AddProduct")
+public class AddProduct extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private static final Product Product = null;
+
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public AddProduct() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		int pid =Integer.parseInt(request.getParameter("txtPid")); 
+		String type = request.getParameter("txttype");
+		String model = request.getParameter("txtmodel");
+		String name = request.getParameter("txtname");
+		Product pro=new Product();
+		pro.setPid(pid);
+		pro.setType(type);
+		pro.setModel(model);
+		pro.setName(name);
+		ProductOperation bop = new ProductOperation();
+		bop.AddProduct(Product);
+		response.setContentType("text/jsp");
+		PrintWriter out = response.getWriter();
+		out.print("<h2>Product Added....</h2>");
+		request.getRequestDispatcher("index.jsp").include(request, response);
+		
+	}
+
+}
+
+
+
+View Product
+
+import java.io.IOException;
+
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * Servlet implementation class ViewProduct
+ */
+@WebServlet("/ViewProduct")
+public class ViewProduct extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private static final Product[] Productall = null;
+       
+    /**
+     * @see HttpServlet#HttpServlet()
+     */
+    public ViewProduct() {
+        super();
+        // TODO Auto-generated constructor stub
+    }
+
+	/**
+	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
+	 */
+	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		ProductOperation bop = new ProductOperation();
+		List<Product> productall = bop.ViewAll();
+		response.setContentType("text/jsp");
+		PrintWriter out = response.getWriter();
+		out.print("<table width='100%' border='1'>");
+		out.print("<tr><th>Book Number</th><th>Book Name</th><th>Author</th></tr>");
+		for(Product p: Productall)
+		{
+		out.print("<tr>");
+		out.print("<td>" + p.getPid() + "</td>");
+		out.print("<td>" + p.getType() + "</td>");
+		out.print("<td>" + p.getModel() + "</td>");
+		out.print("<td>" + p.getName() + "</td>");
+		out.print("</tr>");
+		}
+		out.print("</table>");
+
+	}
+
+}
+
+
+
+
+Xml page
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM
+"http://www.hibernate.org/dtd/hibernate-configuration3.0.dtd">
+<hibernate-configuration>
+<session-factory>
+<property
+name="hibernate.dialect">org.hibernate.dialect.MySQL5Diale
+ct </property>
+<property
+name="hibernate.connection.driver_class">com.mysql.cj.jdbc
+.Driver </property>
+<property
+name="hibernate.connection.url">jdbc:mysql://localhost:330
+6/mphasis_db</property>
+<property name="hibernate.connection.username">
+root 
+</property>
+<property name="hibernate.connection.password">
+suvashree#1234
+</property>
+<property name="show_sql">true </property>
+<property name="hbm2ddl.auto">update </property>
+<mapping class="com.practice.Product"/>
+</session-factory>
+</hibernate-configuration>
+
+Db connection
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
+public class DbConnection {
+public static SessionFactory getConnection()
+{
+Configuration cfg = new Configuration();
+cfg.configure("hibernate.cfg.xml");
+SessionFactory sf = cfg.buildSessionFactory();
+return sf;
+}
+}
+
+
+
