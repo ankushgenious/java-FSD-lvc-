@@ -423,4 +423,94 @@ return sf;
 }
 
 
+# project : 4 Product Details Portal.:
+
+
+
+Product Details Portal.:
+ValidationServlet.java
+package details;
+import java.io.IOException;
+import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+@WebServlet("/ValidationServlet.java")
+public class ValidationServlet extends HttpServlet {
+private static final long serialVersionUID =
+1L;
+protected void doGet(HttpServletRequest
+request, HttpServletResponse response) throws
+ServletException, IOException {
+// TODO Auto-generated method stub
+String pId =
+request.getParameter("productId");
+String pName =
+request.getParameter("productName");
+String pPrice =
+request.getParameter("productPrice");
+HttpSession theSession =
+request.getSession();
+theSession.setAttribute("pid", pId);
+theSession.setAttribute("pname", pName);
+theSession.setAttribute("pprice", pPrice);
+response.sendRedirect("display.jsp");
+}
+}
+Product.jsp:
+<%@ page language="java" contentType="text/html;
+charset=ISO-8859-1"
+pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Product Details</title>
+</head>
+<body>
+<h1>enter the details of the product </h1>
+<hr>
+<form action="ValidationServlet.java">
+<input type="text" name="productId"placeholder="PRODUCT ID"><br>
+<input type="text" name="productName"placeholder="PRODUCT NAME"><br>
+<input type="text" name="productPrice"splaceholder="PRODUCT PRICE"><br>
+<input type="submit" value="ENTER">
+</form>
+</body>
+</html>
+Display.jsp:
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+ pageEncoding="ISO-8859-1"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Insert title here</title>
+</head>
+<body>
+<h1>Displaying the Product Details....</h1>
+<hr>
+<%= "Product Id : " + session.getAttribute("pid")
+%> <br> <br>
+<%= "Product Name : " +
+session.getAttribute("pname") %> <br> <br>
+<%= "Product Price : " +
+session.getAttribute("pprice") %>
+</body>
+</html>
+Web.xml:
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
+http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID"
+version="4.0">
+ <display-name>ProductDetailsPortal</display-name>
+ <welcome-file-list>
+ <welcome-file>Product.jsp</welcome-file>
+ 
+ </welcome-file-list>
+</web-app>
 
