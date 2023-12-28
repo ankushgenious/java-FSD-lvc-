@@ -1,516 +1,270 @@
 # java-FSD-lvc-
 
-PHASE 2 
-# project 1: Validation of user login
-
-HTML file:
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
-</head>
-<body>
-	<form action="LoginServlet" method="get">
-		
-
-		username <input type="text" name="username"><br>
-		password <input type="text" name="password"><br> 
-		<input type="submit" value="click here to process">
-
-		
-	</form>
-
-</body>
-</html>
-
-
-Sevlet:
-
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * Servlet implementation class LoginServlet
- */
-@WebServlet("/LoginServlet")
-public class LoginServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public LoginServlet() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		PrintWriter pw=response.getWriter();
-		String username=request.getParameter("username");
-		String password=request.getParameter("password");
-		if(username.equals(password))
-		{
-			pw.print("login successfull" +username);
-		}
-		else {
-			pw.print("check the details");
-		}
-		response.getWriter().append("Served at: ").append(request.getContextPath());
-	}
-
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
-	}
-
-}
-
-Web.XML
-<?xml version="1.0" encoding="UTF-8"?>
-<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd" version="3.1">
-  <display-name>Login</display-name>
-  <welcome-file-list>
-    <welcome-file>index.html</welcome-file>
-    <welcome-file>index.htm</welcome-file>
-    <welcome-file>index.jsp</welcome-file>
-    <welcome-file>default.html</welcome-file>
-    <welcome-file>default.htm</welcome-file>
-    <welcome-file>default.jsp</welcome-file>
-  </welcome-file-list>
-  <servlet>
-    <description></description>
-    <display-name>LoginServlet</display-name>
-    <servlet-name>LoginServlet</servlet-name>
-    <servlet-class>LoginServlet</servlet-class>
-  </servlet>
-  <servlet-mapping>
-    <servlet-name>LoginServlet</servlet-name>
-    <url-pattern>/LoginServlet</url-pattern>
-  </servlet-mapping>
-</web-app>
-
-
-# project : 2  Retrieving the Product Details Using the Product ID.
+PHASE 3
+# project 1: Searching for a Specific User and Updating the User Information :
+Searching for a Specific User and Updating the User Information :
 Source code:
-Index.html
-<!DOCTYPE html>
-<html>
-<head>
- <title>Product Details</title>
-</head>
-<body>
- <h1>Product Details</h1>
- <form action="ProductDetails" method="GET">
- Enter ProductID: <input type="text" id="product_ID"
-name="product_ID">
- <button type="submit">Get Details</button>
- </form>
-</body>
-</html>
-Product Servlet:
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-@WebServlet("/ProductServlet")
-public class ProductServlet extends HttpServlet {
-private static final long serialVersionUID = 1L;
- 
- String DB_URL = "jdbc:mysql://localhost:3306/productddetails";
- String DB_USER = "root";
- String DB_PASSWORD = "Lokeshmudhiraj@25";
-protected void doGet(HttpServletRequest request, HttpServletResponse 
-response) throws ServletException, IOException {
-// Get the product ID from the request parameter
- String productId = request.getParameter("product_ID"); // Updated 
-parameter name
- // Initialize the database connection and prepared statement
- Connection conn = null;
- PreparedStatement stmt = null;
- // Create a PrintWriter to write the response
- response.setContentType("text/html");
- PrintWriter out = response.getWriter();
- try {
- // Load the JDBC driver
- Class.forName("com.mysql.cj.jdbc.Driver");
- // Establish the database connection
- conn = 
-DriverManager.getConnection("jdbc:mysql://localhost:3306/productddetails","
-root","Lokeshmudhiraj@25");
- // Prepare the SQL query to retrieve product details using the 
-product ID
- String sql = "SELECT * FROM product WHERE product_ID = ?";
- stmt = conn.prepareStatement(sql);
- stmt.setString(1, productId);
- // Execute the query and retrieve the result set
- ResultSet rs = stmt.executeQuery();
- // Check if the product is found
- if (rs.next()) {
- int productID = rs.getInt("product_ID");
- String productName = rs.getString("product_Name");
- double productPrice = rs.getDouble("product_Price");
- String productDescription = 
-rs.getString("product_Description");
- // Display the product details
- out.println("<h2>Product Details:</h2>");
- out.println("<p>Product ID: " + productID + "</p>");
- out.println("<p>Product Name: " + productName + "</p>");
- out.println("<p>Product Price: " + productPrice + "</p>");
- out.println("<p>Product Description: " + productDescription 
-+ "</p>");
- } else {
- // Product not found, display an error message
- out.println("<h2>Error:</h2>");
- out.println("<p>Product not found.</p>");
- }
- // Close the result set, statement, and connection
- rs.close();
- stmt.close();
- conn.close();
- } catch (SQLException | ClassNotFoundException e) {
- e.printStackTrace();
- // Handle any errors that occur during the database connection 
-or query execution
- out.println("<h2>Error:</h2>");
- out.println("<p>Failed to retrieve product details.</p>");
- } finally {
- out.close();
- }
- }
+UserDao.java :
+public interface UserDao { 
+User getUserById(int userId); 
+void updateUser(User user); 
+} 
+HibernateUserDao.java :
+@Repository
+public class HibernateUserDao implements UserDao { 
+@Autowired
+private SessionFactory sessionFactory; 
+@Override
+public User getUserById(int userId) { 
+Session session = sessionFactory.getCurrentSession(); 
+return session.get(User.class, userId); 
+} 
+@Override
+public void updateUser(User user) { 
+Session session = sessionFactory.getCurrentSession(); 
+session.update(user); 
+} 
+} 
+UserService.java :
+public interface UserService { 
+User getUserById(int userId); 
+void updateUser(User user); 
+} 
+ServiceImpl.java :
+@Service
+public class UserServiceImpl implements UserService { 
+@Autowired
+private UserDao userDao; 
+@Override
+public User getUserById(int userId) { 
+return userDao.getUserById(userId); 
+} 
+@Override
+public void updateUser(User user) { 
+userDao.updateUser(user); 
+} 
+} 
+UserController.java :
+@Controller 
+@RequestMapping("/user") 
+public class UserController { 
+@Autowired
+private UserService userService; 
+@GetMapping("/edit") 
+public String showEditForm(@RequestParam("userId") int userId, Model
+model) { 
+User user = userService.getUserById(userId); 
+if (user == null) { 
+// Handle invalid user ID 
+return "errorPage"; 
+} 
+model.addAttribute("user", user); 
+return "editUser"; 
+} 
+@PostMapping("/update") 
+public String updateUser(@ModelAttribute("user") User user) { 
+userService.updateUser(user); 
+return "confirmation"; 
+} 
 }
-
-
-# project : 3  Adding a new product in the Database
-
-Jsp page 
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-<div align="center">
-<h2>Add a New Product</h2>
-<form action="Product" method="post">
-Enter ID: <input type="number" id="pid"
-name="pid"
-placeholder="Enter id here..."
-required> <br /> <br />
-Enter TYPE <input type="text" id="name"
-name="name"
-placeholder="Enter name here..."
-required> <br /> <br />
-Enter MODEL: <input type="text" id="color"
-name="color"
-placeholder="Enter color here..."
-required> <br /> <br />
-Enter NAME: <input type="text" id="price"
-name="price"
-placeholder="Enter number here..."
-required> <br /> <br /> <input
-type="submit" value="Submit">
+enterUserId.jsp :
+<%@ page language="java" contentType="text/html; charset=UTF-8" 
+pageEncoding="UTF-8" %> 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Enter User ID</title>
+</head> 
+<body> 
+<h1>Enter User ID:</h1>
+<form action="${pageContext.request.contextPath}/user/edit" method="get">
+<input type="number" name="userId" required>
+<button type="submit">Edit</button>
 </form>
-</div>
-
-
-</body>
-</html>
-
-Product
-public class Product {
-	private int pid; 
-	private String type;
-	private String model;
-	private String Name;
-	public int getPid() {
-		return pid;
-	}
-	public void setPid(int pid) {
-		this.pid = pid;
-	}
-	public String getType() {
-		return type;
-	}
-	public void setType(String type) {
-		this.type = type;
-	}
-	public String getName() {
-		return Name;
-	}
-	public void setName(String name) {
-		Name = name;
-	}
-	public String getModel() {
-		return model;
-	}
-	public void setModel(String model) {
-		this.model = model;
-	}
-
-}
-
-
-Add Product
-
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * Servlet implementation class AddProduct
- */
-@WebServlet("/AddProduct")
-public class AddProduct extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private static final Product Product = null;
-
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public AddProduct() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-	/**
-	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
-		int pid =Integer.parseInt(request.getParameter("txtPid")); 
-		String type = request.getParameter("txttype");
-		String model = request.getParameter("txtmodel");
-		String name = request.getParameter("txtname");
-		Product pro=new Product();
-		pro.setPid(pid);
-		pro.setType(type);
-		pro.setModel(model);
-		pro.setName(name);
-		ProductOperation bop = new ProductOperation();
-		bop.AddProduct(Product);
-		response.setContentType("text/jsp");
-		PrintWriter out = response.getWriter();
-		out.print("<h2>Product Added....</h2>");
-		request.getRequestDispatcher("index.jsp").include(request, response);
-		
-	}
-
-}
-
-
-
-View Product
-
-import java.io.IOException;
-
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-/**
- * Servlet implementation class ViewProduct
- */
-@WebServlet("/ViewProduct")
-public class ViewProduct extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-	private static final Product[] Productall = null;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
-    public ViewProduct() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
-
-	/**
-	 * @see HttpServlet#service(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ProductOperation bop = new ProductOperation();
-		List<Product> productall = bop.ViewAll();
-		response.setContentType("text/jsp");
-		PrintWriter out = response.getWriter();
-		out.print("<table width='100%' border='1'>");
-		out.print("<tr><th>Book Number</th><th>Book Name</th><th>Author</th></tr>");
-		for(Product p: Productall)
-		{
-		out.print("<tr>");
-		out.print("<td>" + p.getPid() + "</td>");
-		out.print("<td>" + p.getType() + "</td>");
-		out.print("<td>" + p.getModel() + "</td>");
-		out.print("<td>" + p.getName() + "</td>");
-		out.print("</tr>");
-		}
-		out.print("</table>");
-
-	}
-
-}
-
-
-
-
-Xml page
+</body> 
+</html> 
+editUser.jsp :
+<%@ page language="java" contentType="text/html; charset=UTF-8" 
+pageEncoding="UTF-8" %> 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Edit User</title>
+</head> 
+<body> 
+<h1>Edit User</h1>
+<form action="${pageContext.request.contextPath}/user/update"
+method="post">
+<input type="hidden" name="userId" value="${user.userId}">
+<label>Username:</label>
+<input type="text" name="username" value="${user.username}" required><br>
+<label>Email:</label>
+<input type="email" name="email" value="${user.email}" required><br>
+<button type="submit">Update</button>
+</form>
+</body> 
+</html> 
+confirmation.jsp :
+<%@ page language="java" contentType="text/html; charset=UTF-8" 
+pageEncoding="UTF-8" %> 
+<!DOCTYPE html> 
+<html> 
+<head> 
+<title>Update Confirmation</title>
+</head> 
+<body> 
+<h1>Update Successful</h1>
+<p>User details have been updated successfully.</p>
+</body> 
+</html> 
+pom.xml :
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<modelVersion>4.0.0</modelVersion>
+<groupId>com.example</groupId>
+<artifactId>spring-mvc-hibernate-demo</artifactId>
+<version>1.0.0</version>
+<packaging>war</packaging>
+<properties>
+<spring.version>5.3.12.RELEASE</spring.version>
+<hibernate.version>5.5.7.Final</hibernate.version>
+<mysql-connector.version>8.0.27</mysql-connector.version>
+<log4j.version>2.17.0</log4j.version>
+<jstl.version>1.2</jstl.version>
+</properties>
+<dependencies>
+<!-- Spring MVC -->
+<dependency>
+<groupId>org.springframework</groupId>
+<artifactId>spring-webmvc</artifactId>
+<version>${spring.version}</version>
+</dependency>
+<!-- Hibernate -->
+<dependency>
+<groupId>org.hibernate</groupId>
+<artifactId>hibernate-core</artifactId>
+<version>${hibernate.version}</version>
+</dependency>
+<!-- MySQL Connector -->
+<dependency>
+<groupId>mysql</groupId>
+<artifactId>mysql-connector-java</artifactId>
+<version>${mysql-connector.version}</version>
+</dependency>
+<!-- Log4j -->
+<dependency>
+<groupId>org.apache.logging.log4j</groupId>
+<artifactId>log4j-core</artifactId>
+<version>${log4j.version}</version>
+</dependency>
+<!-- JSTL -->
+<dependency>
+<groupId>javax.servlet</groupId>
+<artifactId>jstl</artifactId>
+<version>${jstl.version}</version>
+</dependency>
+</dependencies>
+<build>
+<plugins>
+<!-- Maven Compiler Plugin -->
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-compiler-plugin</artifactId>
+<version>3.8.1</version>
+<configuration>
+<source>1.8</source>
+<target>1.8</target>
+</configuration>
+</plugin>
+<!-- Maven War Plugin -->
+<plugin>
+<groupId>org.apache.maven.plugins</groupId>
+<artifactId>maven-war-plugin</artifactId>
+<version>3.3.1</version>
+<configuration>
+<warSourceDirectory>src/main/webapp</warSourceDirectory>
+<failOnMissingWebXml>false</failOnMissingWebXml>
+</configuration>
+</plugin>
+</plugins>
+</build>
+</project>
+hibernate.cfg.xml :
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE hibernate-configuration SYSTEM
-"http://www.hibernate.org/dtd/hibernate-configuration3.0.dtd">
+<!DOCTYPE hibernate-configuration PUBLIC 
+"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd"> 
 <hibernate-configuration>
 <session-factory>
 <property
-name="hibernate.dialect">org.hibernate.dialect.MySQL5Diale
-ct </property>
+name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
 <property
-name="hibernate.connection.driver_class">com.mysql.cj.jdbc
-.Driver </property>
+name="hibernate.connection.url">jdbc:mysql://localhost:3306/users/property> 
+<property name="hibernate.connection.username">root</property>
+<property name="hibernate.connection.password">Vikarabad@123</property>
 <property
-name="hibernate.connection.url">jdbc:mysql://localhost:330
-6/mphasis_db</property>
-<property name="hibernate.connection.username">
-root 
-</property>
-<property name="hibernate.connection.password">
-suvashree#1234
-</property>
-<property name="show_sql">true </property>
-<property name="hbm2ddl.auto">update </property>
-<mapping class="com.practice.Product"/>
+name="hibernate.dialect">org.hibernate.dialect.MySQL8Dialect</property>
+<property name="hibernate.current_session_context_class">thread</property>
+<property name="hibernate.show_sql">true</property>
+<property name="hibernate.format_sql">true</property>
 </session-factory>
 </hibernate-configuration>
-
-Db connection
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
-public class DbConnection {
-public static SessionFactory getConnection()
-{
-Configuration cfg = new Configuration();
-cfg.configure("hibernate.cfg.xml");
-SessionFactory sf = cfg.buildSessionFactory();
-return sf;
-}
-}
-
-
-# project : 4 Product Details Portal.:
-
-
-
-Product Details Portal.:
-ValidationServlet.java
-package details;
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-@WebServlet("/ValidationServlet.java")
-public class ValidationServlet extends HttpServlet {
-private static final long serialVersionUID =
-1L;
-protected void doGet(HttpServletRequest
-request, HttpServletResponse response) throws
-ServletException, IOException {
-// TODO Auto-generated method stub
-String pId =
-request.getParameter("productId");
-String pName =
-request.getParameter("productName");
-String pPrice =
-request.getParameter("productPrice");
-HttpSession theSession =
-request.getSession();
-theSession.setAttribute("pid", pId);
-theSession.setAttribute("pname", pName);
-theSession.setAttribute("pprice", pPrice);
-response.sendRedirect("display.jsp");
-}
-}
-Product.jsp:
-<%@ page language="java" contentType="text/html;
-charset=ISO-8859-1"
-pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="ISO-8859-1">
-<title>Product Details</title>
-</head>
-<body>
-<h1>enter the details of the product </h1>
-<hr>
-<form action="ValidationServlet.java">
-<input type="text" name="productId"placeholder="PRODUCT ID"><br>
-<input type="text" name="productName"placeholder="PRODUCT NAME"><br>
-<input type="text" name="productPrice"splaceholder="PRODUCT PRICE"><br>
-<input type="submit" value="ENTER">
-</form>
-</body>
-</html>
-Display.jsp:
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
- pageEncoding="ISO-8859-1"%>
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="ISO-8859-1">
-<title>Insert title here</title>
-</head>
-<body>
-<h1>Displaying the Product Details....</h1>
-<hr>
-<%= "Product Id : " + session.getAttribute("pid")
-%> <br> <br>
-<%= "Product Name : " +
-session.getAttribute("pname") %> <br> <br>
-<%= "Product Price : " +
-session.getAttribute("pprice") %>
-</body>
-</html>
-Web.xml:
-<?xml version="1.0" encoding="UTF-8"?>
+dispatcher-servlet.xml :
+<beans xmlns="http://www.springframework.org/schema/beans"
+xmlns:context="http://www.springframework.org/schema/context"
+xmlns:mvc="http://www.springframework.org/schema/mvc"
+xsi:schemaLocation="http://www.springframework.org/schema/beans 
+http://www.springframework.org/schema/beans/spring-beans.xsd 
+http://www.springframework.org/schema/context 
+http://www.springframework.org/schema/context/spring-context.xsd 
+http://www.springframework.org/schema/mvc 
+http://www.springframework.org/schema/mvc/spring-mvc.xsd"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<!-- Enable component scanning for Spring MVC -->
+<context:component-scan base-package="com.example.controller" />
+<!-- Configure Spring MVC -->
+<mvc:annotation-driven />
+<!-- View resolver for JSP files -->
+<bean
+class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+<property name="prefix" value="/WEB-INF/views/" />
+<property name="suffix" value=".jsp" />
+</bean>
+</beans>
+web.xml :
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xmlns="http://xmlns.jcp.org/xml/ns/javaee"
-xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee 
-http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd" id="WebApp_ID"
-version="4.0">
- <display-name>ProductDetailsPortal</display-name>
- <welcome-file-list>
- <welcome-file>Product.jsp</welcome-file>
- 
- </welcome-file-list>
+xmlns="http://java.sun.com/xml/ns/javaee"
+xsi:schemaLocation="http://java.sun.com/xml/ns/javaee 
+http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+id="WebApp_ID" version="3.0">
+<display-name>Spring MVC Hibernate Demo</display-name>
+<servlet>
+<servlet-name>dispatcher</servlet-name>
+<servlet-class>org.springframework.web.servlet.DispatcherServlet</servletclass>
+<init-param>
+<param-name>contextConfigLocation</param-name>
+<param-value>/WEB-INF/dispatcher-servlet.xml</param-value>
+</init-param>
+<load-on-startup>1</load-on-startup>
+</servlet>
+<servlet-mapping>
+<servlet-name>dispatcher</servlet-name>
+<url-pattern>/</url-pattern>
+</servlet-mapping>
 </web-app>
-
+log4j2.xml :
+<Configuration status="WARN">
+<Appenders>
+<Console name="ConsoleAppender" target="SYSTEM_OUT">
+<PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} -
+%msg%n" />
+</Console>
+</Appenders>
+<Loggers>
+<Root level="debug">
+<AppenderRef ref="ConsoleAppender" />
+</Root>
+</Loggers>
+</Configuration>
