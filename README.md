@@ -1262,3 +1262,368 @@ p {
  margin-bottom: 1rem;
  }
 }
+
+
+# practice project : 2
+
+Team Budget Planner 
+
+
+Create_table.js:
+class Deal{
+constructor(dealId, client_name, project_name, project_manager, 
+project_cost){
+this.dealId = dealId;
+this.client_name = client_name;
+this.project_name = project_name;
+this.project_manager = project_manager;
+this.project_cost = project_cost;
+}
+}
+var currentDealId =0;
+var myData = null;
+function initialize(){
+if (localStorage.getItem("myData") ===null){
+//alert("inside if")
+myData = [new Deal(0,"Microsoft","Apollo Project","Mary",1000),
+new Deal(1,"Intel","Hermes Project","Bob",10000),
+new Deal(2,"Apple","Zeus Project","Jane",100000)
+]
+currentDealId = myData.length;
+localStorage.setItem("myData", JSON.stringify(myData));
+}else{
+myData = JSON.parse(localStorage.getItem("myData"));
+currentDealId = myData.length;
+}
+}
+// localstorage allows us to persist key value pairs in a way that would 
+survive page refreshes, navigation, and user closing/reopening browser.
+// localstorage has limits to the size of each object stored. 
+function CreateTableFromJSON() { 
+initialize();
+$('tbody').empty()
+var myDataTest = JSON.parse(localStorage.getItem("myData"))
+//var myDataTest = JSON.parse(localStorage.getItem("myData"))
+$.each(myDataTest, function (key, value) {
+$('tbody').append(`<tr>
+<td>${value.dealId}</td>
+<td>${value.client_name}</td>
+<td>${value.project_name}</td>
+<td>${value.project_manager}</td>
+<td>${value.project_cost}</td>
+<td><button onclick="DeleteRow(${value.dealId})"> <img src="trashcan.png" 
+width="50""> </button></td>
+</tr>`);
+})
+}
+function AddNewDeal() {
+var clientName = document.getElementById("clientNameInput").value;
+var projectName = document.getElementById("projectNameInput").value;
+var projectManager = document.getElementById("projectManagerInput").value;
+var projectCost = document.getElementById("projectCostInput").value;
+document.getElementById("clientNameInput").value = "";
+document.getElementById("projectNameInput").value = "";
+document.getElementById("projectManagerInput").value = "";
+document.getElementById("projectCostInput").value = "";
+InsertRow(currentDealId, clientName, projectName, projectManager, 
+projectCost);
+}
+function InsertRow(dealId, clientName, projectName, projectManager, 
+projectCost) {
+var a= new Deal(dealId, clientName, projectName, projectManager, 
+projectCost);
+myData.push(a);
+currentDealId++;
+localStorage.clear();
+localStorage.setItem("myData", JSON.stringify(myData))
+CreateTableFromJSON();
+}
+function DeleteRow(dealId) {
+for( var i = 0; i < myData.length; i++){ 
+if (parseInt(myData[i].dealId) === parseInt(dealId)) { 
+if(confirm("Confirm deletion" + JSON.stringify(myData[i]))){
+myData.splice(i,1);
+localStorage.removeItem("myData");
+localStorage.setItem("myData", JSON.stringify(myData))
+}else{
+break;
+}
+}
+}
+CreateTableFromJSON();
+}
+Finance.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Finance page</title>
+<style>
+th,
+td,
+p,
+input {
+font: 14px Verdana;
+}
+table,
+th,
+td {
+border: solid 1px #DDD;
+border-collapse: collapse;
+padding: 2px 3px;
+text-align: center;
+}
+th {
+font-weight: bold;
+}
+</style>
+<script src="finance.js"></script>
+<script
+src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></scrip
+t>
+</head>
+<body onload="CreateTableFromJSON()">
+<table border="1">
+<thead>
+<tr>
+<th>Deal Id</th>
+<th>client_name</th>
+<th>project_name</th>
+<th>project_manager</th>
+<th>project_cost</th>
+</tr>
+</thead>
+<tbody class="update" id="body">
+<!-- <tr>
+<td class ="dealId" >${value.dealId}</td>
+<td class ="client_name">${value.client_name}</td>
+<td class ="project_name">${value.project_name}</td>
+<td class ="project_manager">${value.project_manager}</td>
+<td ><input type="text" class ="project_cost" value= 
+"${value.project_cost}"></td>
+</tr> -->
+</tbody>
+</table>
+<input type="button" onclick="UpdateCost()" value="Update Cost" id
+="project_cost"/>
+</body>
+Finance.js
+class Deal {
+constructor(dealId, client_name, project_name, project_manager, 
+project_cost) {
+this.dealId = dealId;
+this.client_name = client_name;
+this.project_name = project_name
+this.project_manager = project_manager
+this.project_cost = project_cost
+}
+}
+function CreateTableFromJSON() {
+$("tbody").empty()
+var Data = JSON.parse(localStorage.getItem("myData"));
+$.each(Data, function (key, value) {
+$('tbody').append(`<tr>
+<td class ="dealId" >${value.dealId}</td>
+<td class ="client_name">${value.client_name}</td>
+<td class ="project_name">${value.project_name}</td>
+<td class ="project_manager">${value.project_manager}</td>
+<td ><input type="text" class ="project_cost" value= 
+"${value.project_cost}"></td>
+</tr>`);
+})
+}
+function UpdateCost(){
+var ary = [];
+$(function () {
+$('.update tr').each(function (a, b) {
+var dealId = $('.dealId',b).text();
+var clientName =$('.client_name',b).text();
+var projectName = $('.project_name',b).text();
+var projectManager =$('.project_manager',b).text();
+var projectCost =$('.project_cost',b).val();
+ary.push(new
+Deal(dealId,clientName,projectName,projectManager,projectCost));
+});
+});
+localStorage.clear();
+localStorage.setItem("myData", JSON.stringify(ary));
+console.log(JSON.stringify(ary));
+alert("cost updated")
+CreateTableFromJSON();
+}
+Form.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Team Budget Planer</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-
+beta2/dist/css/bootstrap.min.css"
+rel="stylesheet" integrity="sha384-
+BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl"
+crossorigin="anonymous">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-
+beta2/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-
+b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.2.slim.min.js"
+integrity="sha384-
+q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+crossorigin="anonymous"></script>
+</head>
+<body>
+<nav class="navbar navbar-expand-md">
+<a class="navbar-brand" href="#"><img src="images/noodle.png" alt=""></a>
+<button class="navbar-toggler navbar-dark" type="button" datatoggle="collapse" data-target="#main-navigation">
+<span class="navbar-toggler-icon"></span>
+</button>
+<div class="collapse navbar-collapse" id="main-navigation">
+<ul class="navbar-nav">
+<li class="nav-item">
+<a class="nav-link" href="index.html">Home</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="form.html">Contact</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="page.html">Pagination</a>
+</li>
+</ul>
+</div>
+</nav>
+<form action="#">
+<div class="form-group">
+<label> Enter Name:</label>
+<input type="text" class="form-control" placeholder="Your Name">
+</div>
+<div class="form-group">
+<label>Enter Email:</label>
+<input type="email" class="form-control" placeholder="xxx@xxxx.com">
+</div>
+<div class="form-group">
+<label>Your Comment:</label>
+<textarea class="form-control">
+</textarea>
+</div>
+<button type="submit">Submit</button>
+</form>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-
+beta2/dist/js/bootstrap.bundle.min.js"
+integrity="sha384-
+b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0"
+crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.3.2.slim.min.js"
+integrity="sha384-
+q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+crossorigin="anonymous"></script>
+</body>
+</html>
+Index.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Deals</title>
+<style>
+th,
+td,
+p,
+input {
+font: 14px Verdana;
+}
+table,
+th,
+td {
+border: solid 1px #DDD;
+border-collapse: collapse;
+padding: 2px 3px;
+text-align: center;
+}
+th {
+font-weight: bold;
+}
+label {
+display: inline-block;
+width: 140px;
+text-align: right;
+}
+</style>
+<script src="create_table.js"></script>
+<script
+src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></scrip
+t>
+</head>
+<body onload="CreateTableFromJSON()">
+<table border="1">
+<thead>
+<tr>
+<th>Deal Id</th>
+<th>client_name</th>
+<th>project_name</th>
+<th>project_manager</th>
+<th>project_cost</th>
+<th>DELETE</th>
+</tr>
+</thead>
+<tbody id="body">
+</tbody>
+</table>
+<div align="center"></div>
+<H3>Add New Deal</H3>
+<li><label>Client Name</label>
+<input type="text" id="clientNameInput" />
+</li>
+<li> <label>Project Name</label>
+<input type="text" id="projectNameInput" />
+</li>
+<li> <label>Project Manager</label>
+<input type="text" id="projectManagerInput" />
+</li>
+<li><label>Project Cost</label> 
+<input type="number" id="projectCostInput" />
+</li>
+</div>
+<input type="button" onclick="AddNewDeal()" value="Save" />
+<a href="finance.html" target="_blank"><button>finance 
+department</button></a>
+</body>
+</html>
+table_example.html
+<!DOCTYPE html>
+<html>
+<head>
+<title>Deals</title>
+<style>
+th, td, p, input {
+font:14px Verdana;
+}
+table, th, td
+{
+border: solid 1px #DDD;
+border-collapse: collapse;
+padding: 2px 3px;
+text-align: center;
+}
+th {
+font-weight:bold;
+}
+</style>
+<script src="create_table.js"></script>
+</head>
+<body onload="CreateTableFromJSON()">
+<p id="showData"></p>
+<H3>Add New Deal</H3>
+<table>
+<p id="newData">
+<label>Client Name</label><input type="text" id="clientNameInput"
+/><br />
+<label>Project Name</label><input type="text" id="projectNameInput"
+/><br />
+<label>Project Manager</label><input type="text"
+id="projectManagerInput" /><br />
+<label>Project Cost</label><input type="number" id="projectCostInput"
+/><br />
+</p>
+</table>
+<input type="button" onclick="AddNewDeal()" value="Save" />
+</body>
